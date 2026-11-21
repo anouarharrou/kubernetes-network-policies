@@ -1,0 +1,13 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+
+nodes:
+  - role: control-plane
+  - role: worker
+  - role: worker
+
+networking:
+  # Calico will provide the CNI. Do not install Kind's default kindnet CNI.
+  disableDefaultCNI: true
+  # Keep this aligned with the default IP pool in Calico's custom-resources.yaml.
+  podSubnet: 192.168.0.0/16

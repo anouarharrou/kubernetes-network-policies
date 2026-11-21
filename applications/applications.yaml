@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: zero-trust-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+        - name: frontend
+          image: busybox:1.36
+          command: ["sh", "-c", "sleep 36000"]
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api
+  namespace: zero-trust-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+      component: api-server
+  template:
+    metadata:
+      labels:
+        app: api
+        component: api-server
+    spec:
+      containers:
+        - name: api
+          image: nginx:1.27-alpine
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  namespace: zero-trust-lab
+spec:
+  selector:
+    app: api
+    component: api-server
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database
+  namespace: zero-trust-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+      component: database-server
+  template:
+    metadata:
+      labels:
+        app: database
+        component: database-server
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.4-alpine
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: zero-trust-lab
+spec:
+  selector:
+    app: database
+    component: database-server
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis
+      protocol: TCP

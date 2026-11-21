@@ -1,0 +1,13 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: zero-trust-lab
+spec:
+  # An empty selector selects every Pod in this namespace.
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  # No ingress or egress rules means deny all traffic in those directions,
+  # except traffic that Kubernetes NetworkPolicy treats as implicitly allowed.
